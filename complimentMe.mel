@@ -1,0 +1,34 @@
+global proc complimentMe ()
+{
+    string $title[], $comps[], $token[], $user, $localUser, $filePath, $os;
+    int $randy; 
+    $os = `about -os`; 
+    string $texties[];
+    if ($os == "linux64") {
+            $filePath = "/afs/d3d/home/forrest/scripts/compliments.txt" ;
+            $user = `getenv USERNAME`; 
+        }else{
+            $filePath = "T:/forrest/scripts/compliments.txt" ;
+            $user = `getenv userName`; 
+    } 
+    $localUser = `capitalizeString $user` ; 
+    if (`filetest -f $filePath`){
+		$fileId = `fopen $filePath "r"` ; 
+		string $nextLine = `fgetline $fileId` ;   
+		while (size($nextLine) > 0) {  
+		    string $cleanLine = strip($nextLine) ;    
+		    $comps[size($comps)] = $cleanLine ;  
+		    $nextLine = `fgetline $fileId` ;   
+		}  
+		int $randy = rand(1,(size($comps)));
+		$title = stringToStringArray ($comps[0], " ");
+		int $randTit = rand (size($title));
+		$texties[0] = ($title[$randTit]+" "+$localUser+", "+$comps[$randy]);
+		 fclose $fileId;
+    }else{
+   		 $texties[0] = "Something's not right";
+    }
+    buildWindow($texties);
+}
+
+complimentMe;
